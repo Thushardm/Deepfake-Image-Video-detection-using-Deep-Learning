@@ -1,1 +1,1 @@
-# Fake-Image-Detection-using-ML
+# DeepFake-Detection-using-ML
