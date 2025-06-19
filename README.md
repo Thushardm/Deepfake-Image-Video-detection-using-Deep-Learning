@@ -96,7 +96,7 @@ With the rise of deepfakes and AI-manipulated media, verifying the authenticity 
 
 ## 👥 Contributors
 
-- [S. Ashwin Reddy]()
+- [S. Ashwin Reddy](https://github.com/ashcode18)
 - [Sudeep Patil](https://github.com/imsudeeppatil)
 - [Thushar D M](https://github.com/Thushardm)
 - [Vinayak Rajput](https://github.com/Vinayak-Rajput)
