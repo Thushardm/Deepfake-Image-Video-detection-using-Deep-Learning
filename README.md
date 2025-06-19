@@ -96,10 +96,10 @@ With the rise of deepfakes and AI-manipulated media, verifying the authenticity 
 
 ## 👥 Contributors
 
-- [S. Ashwin Reddy](#)
-- [Sudeep Patil](#)
-- [Thushar D M](#)
-- [Vinayak Rajput](#)
+- [S. Ashwin Reddy]()
+- [Sudeep Patil](https://github.com/imsudeeppatil)
+- [Thushar D M](https://github.com/Thushardm)
+- [Vinayak Rajput](https://github.com/Vinayak-Rajput)
 
 ## 📚 References
 
