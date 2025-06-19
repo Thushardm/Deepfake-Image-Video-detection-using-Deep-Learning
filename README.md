@@ -103,7 +103,7 @@ With the rise of deepfakes and AI-manipulated media, verifying the authenticity 
 
 ## 📚 References
 
-Please refer to the full list of references in the [project report](./Report_MainProject_final.pdf), including academic studies on CNNs, GANs, and hybrid models in fake media detection.
+Please refer to the full list of references in the [project report](./Details.pdf), including academic studies on CNNs, GANs, and hybrid models in fake media detection.
 
 ## 🛡️ License
 
