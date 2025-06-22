@@ -1,0 +1,6 @@
+# conda create -n mediaauth python=3.10 (Optional)
+# conda activate mediaauth (Optional)
+pip install tensorflow keras numpy matplotlib
+pip install opencv-python
+pip install kagglehub
+pip install flask
