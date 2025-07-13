@@ -58,15 +58,6 @@ With the rise of deepfakes and AI-manipulated media, verifying the authenticity 
 - **Processes:** Upload, Analyze, Detect, View Results
 - **UML Models:** Use Case, Sequence, Activity, State, Class Diagrams
 
-## 📅 Project Timeline (Phase I)
-
-| Task                          | Timeline             | Status       |
-|-------------------------------|----------------------|--------------|
-| Synopsis Submission           | Feb 2025 – Mar 2025  | ✅ Completed |
-| Literature Survey             | Feb 2025 – Mar 2025  | ✅ Completed |
-| Presentation Preparation      | Mar 2025             | ✅ Completed |
-| Internal Reviews & Feedback   | Apr 2025             | ✅ Completed |
-| Final Phase I Presentation    | May 2025             | ✅ Completed |
 
 ## 🌐 Real-World Applications
 
