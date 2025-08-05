@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Media Authentication</title>
+</head>
+<body>
+    <h1>Upload Media File (Image)</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="media" required />
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if prediction %}
+        <h2>Result: {{ prediction }}</h2>
+        <p>File: {{ filename }}</p>
+        <img src="/uploads/{{ filename }}" alt="Uploaded Image" style="max-width:300px;" />
+    {% endif %}
+</body>
+</html>
