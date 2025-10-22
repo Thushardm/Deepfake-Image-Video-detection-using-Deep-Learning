@@ -1,0 +1,33 @@
+# Data
+data/
+docs/
+
+# Models
+models/
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env/
+
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Blockchain
+src/blockchain/contract_config.json
+src/blockchain/private_keys.json

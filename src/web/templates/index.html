@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deepfake Detector</title>
+  <style>
+    .progress { display: none; margin: 20px 0; }
+    .result { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h2>Upload Media for Deepfake Detection</h2>
+  
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="media" id="mediaFile" required>
+    <br><br>
+    <button type="submit">Detect (Async)</button>
+    <button type="button" onclick="uploadSync()">Detect (Sync)</button>
+  </form>
+  
+  <div id="progress" class="progress">
+    <p>Processing... <span id="status">Starting</span></p>
+  </div>
+  
+  <div id="result" class="result" style="display:none;"></div>
+
+  <script>
+    let taskId = null;
+    
+    document.getElementById('uploadForm').onsubmit = function(e) {
+      e.preventDefault();
+      uploadAsync();
+    };
+    
+    function uploadAsync() {
+      const formData = new FormData();
+      formData.append('media', document.getElementById('mediaFile').files[0]);
+      
+      document.getElementById('progress').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+      
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        taskId = data.task_id;
+        checkStatus();
+      });
+    }
+    
+    function checkStatus() {
+      if (!taskId) return;
+      
+      fetch(`/status/${taskId}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('status').textContent = data.status;
+        
+        if (data.status === 'completed') {
+          document.getElementById('progress').style.display = 'none';
+          document.getElementById('result').innerHTML = `
+            ✅ Prediction: <strong>${data.prediction}</strong><br>
+            🔢 Confidence: ${data.confidence}<br>
+            ⛓️ Blockchain Tx: <code>${data.blockchain_tx}</code>
+          `;
+          document.getElementById('result').style.display = 'block';
+        } else if (data.status === 'error') {
+          document.getElementById('progress').style.display = 'none';
+          document.getElementById('result').innerHTML = `❌ Error: ${data.error}`;
+          document.getElementById('result').style.display = 'block';
+        } else {
+          setTimeout(checkStatus, 2000);
+        }
+      });
+    }
+    
+    function uploadSync() {
+      const formData = new FormData();
+      formData.append('media', document.getElementById('mediaFile').files[0]);
+      
+      fetch('/upload_sync', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('result').innerHTML = data;
+        document.getElementById('result').style.display = 'block';
+      });
+    }
+  </script>
+</body>
+</html>
