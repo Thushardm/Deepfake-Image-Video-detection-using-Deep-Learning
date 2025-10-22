@@ -2,14 +2,14 @@
 
 ## 📌 Project Overview
 
-A comprehensive deep learning system for detecting manipulated media content including deepfakes, splicing, and AI-generated images/videos. This project implements multiple state-of-the-art architectures with blockchain-based authenticity verification for real-world deployment scenarios.
+A production-ready deep learning system for detecting manipulated media content including deepfakes, splicing, and AI-generated images/videos. This project implements **EfficientNet model** achieving **84.50% accuracy** with comprehensive input tracking and Flask web interface.
 
-## 🏗️ System Architecture
+## 🏗️ Current System Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Input Media   │───▶│  Model Pipeline  │───▶│ Blockchain Log  │
-│ (Images/Videos) │    │   (7 Models)     │    │  (Immutable)    │
+│   Input Media   │───▶│  EfficientNet    │───▶│ Input Tracking  │
+│ (Images/Videos) │    │   (84.50%)       │    │  (JSON + Files) │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
                               │
                               ▼
@@ -19,154 +19,142 @@ A comprehensive deep learning system for detecting manipulated media content inc
                     └──────────────────┘
 ```
 
-## 🧠 Model Architectures
+## 🤖 **Active Model: EfficientNet**
 
-### **Standalone Models (Single Image Input)**
-| Model | Accuracy | Size | Parameters | Use Case |
-|-------|----------|------|------------|----------|
-| **EfficientNet** | **84.50%** | 51MB | 4.4M | Production (Best) |
-| **CNN** | **81.12%** | 1.3MB | 110K | Mobile/Edge |
-| **VGG16** | 76.04% | 60MB | 15M | Transfer Learning |
-| **ResNet50** | 67.39% | 97MB | 24M | Research |
+| Metric | Value | Details |
+|--------|-------|---------|
+| **Accuracy** | **84.50%** | Best performing model |
+| **Model Size** | 50.9MB | Production ready |
+| **Inference Time** | 2.30ms | Real-time capable |
+| **Parameters** | 4.4M | Optimized architecture |
+| **Input Format** | 224×224×3 | RGB images |
 
-### **Hybrid Models (Temporal Sequence Input)**
-| Model | Accuracy | Size | Parameters | Sequence Length |
-|-------|----------|------|------------|-----------------|
-| **CNN-LSTM** | 65.64%* | 1.7MB | 600K | 5 frames |
-| **CNN-BiLSTM** | 65.64%* | 2.4MB | 700K | 5 frames |
-| **EfficientNet-LSTM** | 65.70%* | 55MB | 4.8M | 5 frames |
+## 📊 Dataset Information
 
-*_Original performance - corrected models expected to achieve 75-80%_
-
-## 📊 Dataset Structure
-
+### **Celeb-DF Dataset Structure:**
 ```
-data/Celeb-DF/
-├── split_data/           # Training Data (80/20 split)
-│   ├── train/
-│   │   ├── real/         # 7,120 images
-│   │   └── fake/         # 13,600 images (65.6% fake ratio)
-│   └── test/
-│       ├── real/         # 1,780 images  
-│       └── fake/         # 3,400 images
-├── videos/              # Original video files
-│   ├── YouTube-real/    # Authentic videos
-│   └── Celeb-synthesis/ # Deepfake videos
-└── processed_frames/    # Extracted frames (50 per video)
+Total Images: 25,900 (from 590 videos)
+├── Training Set (80%): 20,720 images
+│   ├── Real: 7,120 images (34.4%)
+│   └── Fake: 13,600 images (65.6%)
+└── Test Set (20%): 5,180 images
+    ├── Real: 1,780 images (34.4%)
+    └── Fake: 3,400 images (65.6%)
 ```
 
-## 🔧 Technical Implementation
+### **Class Mapping:**
+- **Real Images**: Model output > 0.5 → "Real"
+- **Fake Images**: Model output ≤ 0.5 → "Fake"
 
-### **Data Processing Pipeline**
-1. **Video Processing**: Extract 50 frames per video using OpenCV
-2. **Preprocessing**: Resize to 224×224, normalize (0-1 range)
-3. **Augmentation**: Rotation, brightness, zoom, horizontal flip
-4. **Class Balancing**: Weight adjustment (Real:1.0, Fake:0.35-0.52)
+## 🌐 Flask Web Application
 
-### **Training Strategy**
-```python
-# Standalone Models
-batch_size = 32 (CNN) / 16 (EfficientNet)
-epochs = 20-25
-learning_rate = 0.001 (CNN) / 0.0005 (EfficientNet)
-callbacks = [EarlyStopping, ReduceLROnPlateau]
+### **API Endpoints:**
+| Endpoint | Method | Purpose | Response |
+|----------|--------|---------|----------|
+| **`/`** | GET | Web interface | HTML page |
+| **`/upload`** | POST | **Async processing** | Task ID + status |
+| **`/upload_sync`** | POST | **Sync processing** | Immediate results |
+| **`/status/<task_id>`** | GET | **Check progress** | Processing status |
+| **`/tracking`** | GET | **View all inputs** | Complete file history |
 
-# Hybrid Models (Corrected)
-sequence_length = 5 frames
-data_generation = sliding_window(step=1)
-architecture = TimeDistributed(CNN) + LSTM/BiLSTM
+### **Supported Formats:**
+- **Images**: `.jpg`, `.jpeg`, `.png`
+- **Videos**: `.mp4`, `.avi`, `.mov` (any OpenCV supported format)
+
+## 📁 Project Structure
+
+```
+DeepFake-Images-Videos-Detection-and-Authentication/
+├── 📂 src/                          # Source code
+│   ├── app.py                      # Flask web server (MAIN)
+│   ├── templates/                  # HTML templates
+│   ├── 📂 models/                   # ML model implementations
+│   │   ├── efficientnet.py        # EfficientNet (ACTIVE)
+│   │   ├── basic_cnn.py           # CNN model
+│   │   └── *.py                   # Other models
+│   ├── 📂 utils/                   # Utility functions
+│   │   └── video_utils.py         # Preprocessing & prediction
+│   └── 📂 blockchain/              # Blockchain (DISABLED)
+├── 📂 data/                        # Dataset storage
+│   └── 📂 Celeb-DF/               # Celeb-DF dataset
+│       ├── split_data/            # Processed training data
+│       └── videos/                # Original videos
+├── 📂 model_images/saved/          # Trained models (.h5)
+├── 📂 test/                        # Validation samples
+│   ├── images/                    # Test images (real/fake)
+│   └── videos/                    # Test videos (real/fake)
+├── 📂 stored_inputs/               # User uploaded files
+├── 📂 uploads/                     # Temporary upload folder
+├── input_tracking.json            # Processing history
+└── 📂 config/                      # Configuration files
 ```
 
-### **Model Storage**
-- **Format**: `.keras` (recommended) with `.h5` fallback
-- **Location**: `model_images/saved/`
-- **Loading Priority**: EfficientNet → CNN → VGG16 → ResNet50
+## 🚀 Quick Start
 
-## 🌐 Web Application
-
-### **Flask API Endpoints**
-- `GET /` - Web interface
-- `POST /upload` - Async video processing
-- `GET /status/<task_id>` - Check processing status
-- `POST /upload_sync` - Sync processing (small files)
-
-### **Features**
-- **Async Processing**: Background threads for large files
-- **Blockchain Logging**: Immutable detection records
-- **Multi-format Support**: Images (.jpg) and videos (.mp4)
-- **Real-time Feedback**: Progress tracking and status updates
-
-## ⛓️ Blockchain Integration
-
-```python
-# Detection Logging
-media_hash = SHA256(file_content)
-blockchain_tx = log_detection_to_chain(
-    media_hash=media_hash,
-    prediction=label,
-    confidence=score
-)
+### **1. Setup Environment**
+```bash
+cd DeepFake-Images-Videos-Detection-and-Authentication
+source .env/bin/activate  # Activate virtual environment
+pip install -r config/requirements.txt
 ```
 
-## 📈 Performance Benchmarks
+### **2. Run Flask Application**
+```bash
+cd src
+python app.py
+```
 
-### **Inference Speed**
-- CNN: 0.36ms (fastest)
-- EfficientNet: 2.25ms (best accuracy)
-- Hybrid Models: 3-10ms (temporal analysis)
+### **3. Access Web Interface**
+- Open browser: `http://localhost:5000`
+- Upload images or videos for detection
+- View results with confidence scores
 
-### **Deployment Recommendations**
-- **🏆 Production**: EfficientNet (84.50% accuracy)
-- **📱 Mobile/Edge**: CNN (81.12%, 1.3MB)
-- **⚡ Real-time**: CNN (fastest inference)
-- **🔗 Temporal**: Corrected hybrid models (75-80% expected)
+## 📈 Performance Metrics
 
-## 🛠️ Technology Stack
+### **Model Comparison Results:**
+| Rank | Model | Accuracy | Size | Speed | Status |
+|------|-------|----------|------|-------|--------|
+| 🥇 | **EfficientNet** | **84.50%** | 50.9MB | 2.30ms | **ACTIVE** |
+| 🥈 | CNN | 81.12% | 1.3MB | 0.39ms | Available |
+| 🥉 | VGG16 | 76.04% | 60.0MB | 3.67ms | Available |
+| 4 | ResNet50 | 67.39% | 96.6MB | 3.01ms | Available |
 
-### **Core Technologies**
-- **Python 3.10+** - Primary language
-- **TensorFlow 2.13+** - Deep learning framework
-- **Keras** - High-level neural network API
-- **OpenCV** - Computer vision operations
-- **Flask** - Web framework
-- **Web3.py** - Blockchain integration
+## 🧪 Testing & Validation
 
-### **Development Tools**
-- **scikit-learn** - ML utilities and metrics
-- **NumPy** - Numerical computing
-- **Matplotlib/Seaborn** - Visualization
-- **Werkzeug** - WSGI utilities
+### **Test Samples Available:**
+- **`test/images/`**: Real and fake image samples
+- **`test/videos/`**: Original video samples from dataset
+- **Manual Testing**: Upload via web interface
 
-## 🎯 Key Innovations
+### **Expected Results:**
+- **Real Images**: Should predict "Real" with high confidence
+- **Fake Images**: Should predict "Fake" with high confidence
+- **Processing Time**: < 5 seconds for most files
 
-1. **Corrected Hybrid Training**: Fixed sequence generation for better temporal learning
-2. **Multi-Model Architecture**: 7 different approaches for various use cases
-3. **Blockchain Verification**: Immutable authenticity records
-4. **Production-Ready API**: Async processing with status tracking
-5. **Modern Model Format**: `.keras` format for better compatibility
+## 📊 Input Tracking
 
-## 🌍 Real-World Applications
+### **Tracking Features:**
+- **File Preservation**: All uploads stored permanently
+- **Processing History**: Complete log in `input_tracking.json`
+- **Metadata**: Filename, size, upload time, predictions
+- **API Access**: View history via `/tracking` endpoint
 
-- **Social Media Platforms**: Content moderation at scale
-- **News Organizations**: Verify media authenticity
-- **Legal Systems**: Evidence verification
-- **Security Agencies**: Threat detection
-- **E-commerce**: Product image verification
-- **Healthcare**: Medical image authenticity
+## 🎯 Key Features
 
-## 📚 Research Contributions
-
-- Comprehensive comparison of standalone vs hybrid approaches
-- Analysis of temporal sequence generation methods
-- Blockchain integration for media authenticity
-- Production deployment strategies for deepfake detection
+✅ **Production Ready**: Flask web interface with async processing  
+✅ **High Accuracy**: 84.50% detection accuracy with EfficientNet  
+✅ **Multi-Format**: Supports both images and videos  
+✅ **Input Tracking**: Complete audit trail of all processing  
+✅ **Real-Time**: Fast inference (2.30ms per image)  
+✅ **Scalable**: Threaded processing for concurrent requests  
+✅ **User Friendly**: Simple web interface with progress tracking
 
 ## 👥 Contributors
 
-- [S. Ashwin Reddy](https://github.com/ashcode18) - Model Architecture & Training
-- [Sudeep Patil](https://github.com/imsudeeppatil) - Data Processing & Analysis  
-- [Thushar D M](https://github.com/Thushardm) - Web Application & Integration
-- [Vinayak Rajput](https://github.com/Vinayak-Rajput) - Blockchain & Deployment
+- S. Ashwin Reddy
+- Sudeep Patil  
+- Thushar D M
+- Vinayak Rajput
 
 ## 📄 Documentation
 
